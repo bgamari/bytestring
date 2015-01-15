@@ -391,10 +391,10 @@ runBuilderWith (Builder b) = b
 {-# INLINE[1] empty #-}
 empty :: Builder
 empty = Builder (\cont -> (\range -> cont range))
--- This eta expansion (hopefully) allows GHC to worker-wrapper the
--- 'BufferRange' in the 'empty' base case of loops (since
--- worker-wrapper requires (TODO: verify this) that all paths match
--- against the wrapped argument.
+-- This eta expansion allows GHC to specialize on the 'BufferRange'
+-- constructor between steps.  Without this expansion the presence of
+-- an 'empty' will inhibit this optimization as it does not pattern
+-- match on the 'BufferRange'.
 
 -- | Concatenate two 'Builder's. This function is only exported for use in rewriting
 -- rules. Use 'mappend' otherwise.
