@@ -42,7 +42,7 @@ module Data.ByteString.Builder.Prim.Internal (
 
   -- * Bounded-size builder primitives
   , BoundedPrim
-  , boudedPrim
+  , boundedPrim
   , sizeBound
   , runB
 
@@ -219,8 +219,8 @@ data BoundedPrim a = BP {-# UNPACK #-} !Int (a -> Ptr Word8 -> IO (Ptr Word8))
 sizeBound :: BoundedPrim a -> Int
 sizeBound (BP b _) = b
 
-boudedPrim :: Int -> (a -> Ptr Word8 -> IO (Ptr Word8)) -> BoundedPrim a
-boudedPrim = BP
+boundedPrim :: Int -> (a -> Ptr Word8 -> IO (Ptr Word8)) -> BoundedPrim a
+boundedPrim = BP
 
 {-# INLINE CONLIKE runB #-}
 runB :: BoundedPrim a -> a -> Ptr Word8 -> IO (Ptr Word8)
