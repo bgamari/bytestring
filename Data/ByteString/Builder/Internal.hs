@@ -811,9 +811,14 @@ ensureFree :: Int -> Builder
 ensureFree minFree =
     builder step
   where
-    step k br@(BufferRange op ope)
-      | ope `minusPtr` op < minFree = return $ bufferFull minFree op k
-      | otherwise                   = k br
+    step k br@(BufferRange op ope) =
+      case ope `minusPtr` op < minFree of
+        True    -> return $ bufferFull minFree op k
+        False   -> k br
+      {-# INLINE_THROUGH #-}
+      -- This is what we want, the ability to tell GHC "it's okay if we lose
+      -- sharing across the branches of this case"
+
 
 -- | Copy the bytes from a 'BufferRange' into the output stream.
 wrappedBytesCopyStep :: BufferRange  -- ^ Input 'BufferRange'.
