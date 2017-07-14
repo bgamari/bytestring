@@ -125,6 +125,9 @@ import GHC.IO                   (IO(IO),unsafeDupablePerformIO)
 #else
 import GHC.IOBase               (IO(IO),RawBuffer,unsafeDupablePerformIO)
 #endif
+#if __GLASGOW_HASKELL__ >= 802
+import GHC.Base                 (Int(I#))
+#endif
 
 import GHC.ForeignPtr           (ForeignPtr(ForeignPtr)
                                 ,newForeignPtr_, mallocPlainForeignPtrBytes)
@@ -196,10 +199,17 @@ packChars cs = unsafePackLenChars (List.length cs) cs
 
 {-# INLINE [0] packChars #-}
 
+#if __GLASGOW_HASKELL__ > 802
+{-# RULES
+"ByteString packChars/packAddress" forall l s .
+   packChars (unpackCString# (# l, s #)) = PS (accursedUnutterablePerformIO $ newForeignPtr_ $ Ptr s) 0 (I# l)
+ #-}
+#else
 {-# RULES
 "ByteString packChars/packAddress" forall s .
    packChars (unpackCString# s) = accursedUnutterablePerformIO (unsafePackAddress s)
  #-}
+#endif
 
 unsafePackLenBytes :: Int -> [Word8] -> ByteString
 unsafePackLenBytes len xs0 =
