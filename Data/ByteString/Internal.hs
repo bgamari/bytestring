@@ -140,6 +140,9 @@ import GHC.IOBase               (IO(IO),RawBuffer,unsafeDupablePerformIO)
 
 import GHC.ForeignPtr           (ForeignPtr(ForeignPtr)
                                 ,newForeignPtr_, mallocPlainForeignPtrBytes)
+#if __GLASGOW_HASKELL__ >= 811
+import GHC.ForeignPtr           (ForeignPtrContents(FinalPtr))
+#endif
 import GHC.Ptr                  (Ptr(..), castPtr)
 
 -- CFILES stuff is Hugs only
@@ -351,7 +354,11 @@ unpackAppendCharsStrict (PS fp off len) xs =
 
 -- | The 0 pointer. Used to indicate the empty Bytestring.
 nullForeignPtr :: ForeignPtr Word8
+#if __GLASGOW_HASKELL__ >= 811
+nullForeignPtr = ForeignPtr nullAddr# FinalPtr
+#else
 nullForeignPtr = ForeignPtr nullAddr# (error "nullForeignPtr") --TODO: should ForeignPtrContents be strict?
+#endif
 
 -- ---------------------------------------------------------------------
 -- Low level constructors
