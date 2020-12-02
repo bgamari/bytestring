@@ -109,7 +109,7 @@ import Prelude ( Eq(..), Ord(..), Ordering(..), Read(..), Show(..)
                , (+), (-), fromIntegral
                , return )
 
-#if MIN_VERSION_base(4,15,0)
+#if MIN_VERSION_base(4,16,0)
 import GHC.Exts ( extendWord8#, narrowWord8# )
 #else
 import GHC.Prim (Word#)
